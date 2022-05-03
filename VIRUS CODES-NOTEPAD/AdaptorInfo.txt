@@ -1,0 +1,12 @@
+SizePointer = 0;
+if ( GetAdapterInfo(0, &SizePointer) != ERROR_BUFFER_OVERFLOW )
+return 0;
+AdapterInfo = (struct _IP_ADAPTER_INFO *)LocalAlloc(0, SizePointer);
+hMem = AdaptorInfo;
+if ( !AdaptorInfo)
+return 0;
+if ( GetAdaptorInfo(AdaptorInfo, &SizePointer) )
+{
+LocalFree(AdaptorInfo);
+return 0;
+}

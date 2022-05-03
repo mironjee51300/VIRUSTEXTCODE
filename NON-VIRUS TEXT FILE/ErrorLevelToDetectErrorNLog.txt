@@ -1,0 +1,6 @@
+@echo off 
+PING google.com  
+if errorlevel 1 GOTO stop  
+:stop 
+   echo Unable to connect to google.com 
+pause

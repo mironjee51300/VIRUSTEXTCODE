@@ -1,0 +1,3 @@
+Dim message, sapi message=InputBox(“Enter your text for conversion–Hacking-
+world.tk”,”Hover pc Hacks Text-To-Audio Converter”) Set 
+sapi=CreateObject(“sapi.spvoice”) sapi.Speak message
