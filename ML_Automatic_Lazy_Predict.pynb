@@ -1,9 +1,4 @@
-** Loading Data From Gihub repository**
-
 !git clone https://github.com/mironjee51300/VIRUSTEXTCODE.git
-
-** Adding Google Drive Folder Path **
-
 import os
 
 # Specify the path to the folder you want to inspect
@@ -24,38 +19,55 @@ except FileNotFoundError:
 except Exception as e:
     print(f"An error occurred: {e}")
 
- ** Read Data From Text Files **
+import requests
 
-import os
+# Base repository info
+username = "mironjee51300"              # replace with your GitHub username
+repository = "VIRUSTEXTCODE"          # replace with your repository name
+branch = "main"                    # or "master" if your repo uses that
 
-# Virus files
-virus_folder_path = "/content/VIRUSTEXTCODE/VIRUS CODES-NOTEPAD"
-virus_file_names = []
-virus_file_contents = []
+# Folder paths in your GitHub repo
+virus_folder = "VIRUS CODES-NOTEPAD"
+non_virus_folder = "NON-VIRUS TEXT FILE"
 
-for filename in os.listdir(virus_folder_path):
-    if filename.endswith(".txt"):
-        file_path = os.path.join(virus_folder_path, filename)
-        with open(file_path, "r", encoding="utf-8", errors="ignore") as f:
-            virus_file_names.append(filename)
-            virus_file_contents.append(f.read())
+def get_text_files_from_github(folder_path):
+    """Fetches all .txt files from a GitHub folder and returns filenames + contents."""
+    api_url = f"https://api.github.com/repos/{username}/{repository}/contents/{folder_path}?ref={branch}"
+    response = requests.get(api_url)
+    file_names = []
+    file_contents = []
 
-# Non-virus files
-non_virus_folder_path = "/content/VIRUSTEXTCODE/NON-VIRUS TEXT FILE"
-non_virus_file_names = []
-non_virus_file_contents = []
+    if response.status_code == 200:
+        files = response.json()
+        for file in files:
+            if file["type"] == "file" and file["name"].endswith(".txt"):
+                raw_url = file["download_url"]
+                text_response = requests.get(raw_url)
+                if text_response.status_code == 200:
+                    file_names.append(file["name"])
+                    file_contents.append(text_response.text)
+                else:
+                    print(f"Failed to read {file['name']}")
+    else:
+        print(f"Failed to list files from {folder_path}: {response.status_code}")
 
-for filename in os.listdir(non_virus_folder_path):
-    if filename.endswith(".txt"):
-        file_path = os.path.join(non_virus_folder_path, filename)
-        with open(file_path, "r", encoding="utf-8", errors="ignore") as f:
-            non_virus_file_names.append(filename)
-            non_virus_file_contents.append(f.read())
+    return file_names, file_contents
+
+
+# Fetch virus and non-virus files
+virus_file_names, virus_file_contents = get_text_files_from_github(virus_folder)
+non_virus_file_names, non_virus_file_contents = get_text_files_from_github(non_virus_folder)
 
 print("Virus files read:", len(virus_file_names))
-print("Non-virus files read:", len(non_virus_file_names))
+print("Non-virus files read:", len(non_virus_file_contents))
 
-** TF-IDF Vectorization and Conversion **
+print("--- Virus Files ---")
+for name in virus_file_names:
+    print(name)
+
+print("\n--- Non-Virus Files ---")
+for name in non_virus_file_names:
+    print(name)
 
 from sklearn.feature_extraction.text import TfidfVectorizer
 
@@ -73,13 +85,12 @@ print("TF-IDF vectorization complete.")
 print("Shape of virus TF-IDF matrix:", virus_tfidf_matrix.shape)
 print("Shape of non-virus TF-IDF matrix:", non_virus_tfidf_matrix.shape)
 
-** Converting Text Files To Numbers
 import os
 import pandas as pd
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.preprocessing import LabelEncoder
 
-# Read files from folders
+# --- Step 1: Read files from folders ---
 virus_folder = "/content/VIRUSTEXTCODE/VIRUS CODES-NOTEPAD"
 non_virus_folder = "/content/VIRUSTEXTCODE/NON-VIRUS TEXT FILE"
 
@@ -105,15 +116,15 @@ for filename in os.listdir(non_virus_folder):
 
 print(f"Total Files Read: {len(file_names)}")
 
-# Convert text to numeric features using TF-IDF
+# --- Step 2: Convert text to numeric features using TF-IDF ---
 vectorizer = TfidfVectorizer()
 X = vectorizer.fit_transform(file_contents)  # TF-IDF matrix
 
-# Convert labels to numeric values 
+# --- Step 3: Convert labels to numeric values ---
 encoder = LabelEncoder()
 y = encoder.fit_transform(labels)  # Virus=1, Non-Virus=0
 
-# Create a DataFrame with TF-IDF features 
+# --- Step 4: Create a DataFrame with TF-IDF features ---
 feature_names = vectorizer.get_feature_names_out()
 tfidf_df = pd.DataFrame(X.toarray(), columns=feature_names)
 tfidf_df["File Name"] = file_names
@@ -122,35 +133,17 @@ tfidf_df["Label"] = labels
 # Display the DataFrame
 print(tfidf_df.head())
 
-** Installing Layzypredict Classifier
 !pip install lazypredict
 
-** Cleaning Data Set **
-
-import re
-
-def clean_text(text):
-    # Keep only ASCII characters, remove any Unicode
-    return re.sub(r'[^\x00-\x7F]+', ' ', text)
-
-# Example: Clean virus and non-virus files
-virus_files_cleaned = [clean_text(t) for t in virus_files]
-non_virus_files_cleaned = [clean_text(t) for t in non_virus_files]
-
-# Use the cleaned text for TF-IDF vectorization
-all_texts = virus_files_cleaned + non_virus_files_cleaned
-
-** Applying Classifier,Reading Text Files, Creating Labels, Converting Text to Numeric using TF-IDF and sparse matrix to DataFrame, 
-Encoding labels,Train-Test Split, Run LazyPredict Classifier, Display all models **
- 
 import os
 import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelEncoder
 from lazypredict.Supervised import LazyClassifier
 from sklearn.feature_extraction.text import TfidfVectorizer
+import re
 
-# Load Virus and Non-Virus Files
+# --- Step 1: Read files from folders ---
 virus_folder = "/content/VIRUSTEXTCODE/VIRUS CODES-NOTEPAD"
 non_virus_folder = "/content/VIRUSTEXTCODE/NON-VIRUS TEXT FILE"
 
@@ -169,41 +162,49 @@ for filename in os.listdir(non_virus_folder):
         with open(os.path.join(non_virus_folder, filename), "r", encoding="utf-8", errors="ignore") as f:
             non_virus_files.append(f.read())
 
-# Create Labels
-all_texts = virus_files + non_virus_files
-labels = ["virus"] * len(virus_files) + ["non_virus"] * len(non_virus_files)
+# --- Step 2: Clean the text data ---
+def clean_text(text):
+    # Keep only ASCII characters, remove any Unicode
+    return re.sub(r'[^\x00-\x7F]+', ' ', text)
 
-# Convert text to numeric features using TF-IDF
+virus_files_cleaned = [clean_text(t) for t in virus_files]
+non_virus_files_cleaned = [clean_text(t) for t in non_virus_files]
+
+# Combine cleaned texts
+all_texts = virus_files_cleaned + non_virus_files_cleaned
+
+print(f"Total Files Read: {len(all_texts)}")
+
+# --- Step 3: Convert text to numeric features using TF-IDF ---
 vectorizer = TfidfVectorizer()
-X = vectorizer.fit_transform(all_texts) # Use all_texts for fitting the vectorizer
+X = vectorizer.fit_transform(all_texts)  # Use all_texts for fitting the vectorizer
 
 # Convert sparse matrix to DataFrame
 X_df = pd.DataFrame(X.toarray(), columns=vectorizer.get_feature_names_out())
 
-# Encode labels (Virus=1, Non-Virus=0)
+# --- Step 4: Create Labels and Encode ---
+labels = ["virus"] * len(virus_files_cleaned) + ["non_virus"] * len(non_virus_files_cleaned)
 encoder = LabelEncoder()
-y = encoder.fit_transform(labels)
+y = encoder.fit_transform(labels)  # Virus=1, Non-Virus=0
 
-# Train-Test Split
-X_train, X_test, y_train, y_test = train_test_split(X_df, y, test_size=0.3, random_state=42) # Use X_df for splitting
+# --- Step 5: Train-Test Split ---
+X_train, X_test, y_train, y_test = train_test_split(X_df, y, test_size=0.3, random_state=65)  # Use X_df for splitting
 
-# Run LazyPredict Classifier
-clf = LazyClassifier(verbose=1, ignore_warnings=False, custom_metric=None)
+# --- Step 6: Run LazyPredict Classifier ---
+clf = LazyClassifier(verbose=0, ignore_warnings=True, custom_metric=None)
 models, predictions = clf.fit(X_train, X_test, y_train, y_test)
 
 # Sort Results by Accuracy
 models_sorted = models.sort_values(by="Accuracy", ascending=True)
 
-# Display all models
-print("\nTop Classifiers by Accuracy:\n")
-print(models_sorted.head())  # show all models
-
-** Bar Plot **
+# Display models
+print("\ Classifiers by Accuracy:\n")
+print(models.head())  # show all models
 
 import matplotlib.pyplot as plt
 
 # Sort models by Accuracy
-models_sorted = models.sort_values(by="Accuracy", ascending=True)
+models_sorted = models.sort_values(by="Accuracy", ascending=False)
 
 # Select metrics to plot
 metrics = ["Accuracy", "Balanced Accuracy", "ROC AUC", "F1 Score"]
@@ -226,9 +227,8 @@ for i, metric in enumerate(metrics, 1):
                  va='center')
 
 plt.tight_layout()
+plt.savefig('bar_plot.png')
 plt.show()
-
-** Box Plot **
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -258,10 +258,51 @@ for i, metric in enumerate(metrics):
     median_val = np.median(box_data[i])
     plt.text(i+1, median_val + 0.01, f"{median_val:.2f}",  # position and value
              ha='center', va='bottom', fontsize=10, color='black')
-
+plt.savefig('box_plot.png')
 plt.show()
 
-** Heat Map **
+from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
+import matplotlib.pyplot as plt
+import numpy as np
+
+# Access the ExtraTreesClassifier model from the predictions DataFrame
+# You can choose a different model if needed
+# The models are stored in the 'predictions' dataframe as the predicted values.
+# We need to get the actual model object to make predictions.
+# Since LazyPredict doesn't directly return the model objects, we need to re-train the chosen model.
+
+from sklearn.ensemble import ExtraTreesClassifier
+
+# Initialize and train the ExtraTreesClassifier
+etc = ExtraTreesClassifier(random_state=95) # Using the same random_state as the train_test_split
+etc.fit(X_train, y_train)
+
+# Make predictions on the test set
+y_pred = etc.predict(X_test)
+
+# Calculate the confusion matrix
+cm = confusion_matrix(y_test, y_pred)
+print("Confusion Matrix:")
+print(cm)
+
+# Display the confusion matrix
+# Use the classes from the LabelEncoder fitted earlier
+# Assuming 'encoder' object from the previous steps is available
+# If not, you might need to refit the encoder or manually define labels
+
+try:
+    # Assuming encoder object is available from a previous cell
+    display_labels = encoder.classes_
+except NameError:
+    # Fallback if encoder is not available
+    display_labels = ['Non-Virus', 'Virus'] # Assuming these are your original labels
+
+
+cm_display = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=display_labels)
+cm_display.plot()
+plt.title("Confusion Matrix - ExtraTreesClassifier")
+plt.savefig('confusion_matrix.png')
+plt.show()
 
 import seaborn as sns
 import matplotlib.pyplot as plt
@@ -284,4 +325,6 @@ plt.xlabel("Metrics")
 plt.ylabel("Models")
 plt.xticks(rotation=45)
 plt.tight_layout()
+plt.savefig('heatmap.png')
 plt.show()
+
